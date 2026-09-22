@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Electricity Bill Predictor</title>
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:Segoe UI,Arial;}
+body{
+background:
+radial-gradient(circle at top,#1e3c72,#0f172a 70%),
+repeating-linear-gradient(90deg,rgba(0,255,255,.08)0 1px,transparent 1px 60px),
+repeating-linear-gradient(0deg,rgba(0,255,255,.08)0 1px,transparent 1px 60px);
+min-height:100vh;
+color:#fff;
+overflow-x:hidden;
+}
+body::before{
+content:"";
+position:fixed;
+inset:0;
+background:linear-gradient(120deg,transparent 30%,rgba(0,255,255,.12)50%,transparent 70%);
+animation:move 8s linear infinite;
+pointer-events:none;
+}
+@keyframes move{
+0%{transform:translateX(-100%);}
+100%{transform:translateX(100%);}
+}
+.header{
+text-align:center;
+padding:25px;
+background:rgba(255,255,255,.08);
+backdrop-filter:blur(16px);
+border-bottom:1px solid rgba(255,255,255,.15);
+}
+.logo{
+width:100%;
+max-width:620px;
+background:#fff;
+padding:8px;
+border-radius:14px;
+display:block;
+margin:auto auto 15px;
+}
+.header h1{font-size:32px;}
+.header h2{margin:5px 0;color:#7dd3fc;}
+.header p{color:#cbd5e1;}
+#loginPage{
+display:flex;
+justify-content:center;
+align-items:center;
+height:70vh;
+}
+.glass{
+width:360px;
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(20px);
+padding:28px;
+border-radius:18px;
+border:1px solid rgba(255,255,255,.2);
+box-shadow:0 8px 25px rgba(0,0,0,.35);
+}
+.glass h2{text-align:center;margin-bottom:18px;}
+.passbox{display:flex;}
+.passbox input{
+flex:1;
+padding:12px;
+border:none;
+outline:none;
+border-radius:8px 0 0 8px;
+}
+.eye{
+width:55px;
+background:#06b6d4;
+color:#fff;
+border:none;
+cursor:pointer;
+font-size:18px;
+border-radius:0 8px 8px 0;
+}
+.btn{
+width:100%;
+padding:12px;
+margin-top:15px;
+background:#06b6d4;
+color:#fff;
+border:none;
+border-radius:8px;
+cursor:pointer;
+font-size:16px;
+}
+.btn:hover{background:#0891b2;}
+#msg{color:#fca5a5;text-align:center;margin-top:10px;}
+#mainPage{
+display:none;
+max-width:1050px;
+margin:auto;
+padding:25px;
+}
+.card{
+background:rgba(255,255,255,.12);
+backdrop-filter:blur(18px);
+border:1px solid rgba(255,255,255,.15);
+border-radius:18px;
+padding:22px;
+margin-bottom:20px;
+box-shadow:0 6px 18px rgba(0,0,0,.25);
+}
+.card h2{
+margin-bottom:15px;
+color:#7dd3fc;
+}
+.row{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+}
+.row input{
+flex:1;
+min-width:220px;
+padding:12px;
+border:none;
+border-radius:10px;
+}
+.add{
+padding:12px 24px;
+background:#22c55e;
+color:white;
+border:none;
+border-radius:10px;
+margin-top:12px;
+cursor:pointer;
+}
+.add:hover{background:#16a34a;}
+table{
+width:100%;
+border-collapse:collapse;
+overflow:hidden;
+border-radius:12px;
+}
+th{
+background:#0ea5e9;
+color:#fff;
+}
+th,td{
+padding:12px;
+text-align:center;
+border-bottom:1px solid rgba(255,255,255,.15);
+}
+tr:nth-child(even){background:rgba(255,255,255,.05);}
+#result{
+background:rgba(14,165,233,.15);
+padding:15px;
+border-left:4px solid #38bdf8;
+border-radius:10px;
+}
+.badge{
+display:inline-block;
+background:#0ea5e9;
+padding:6px 12px;
+border-radius:20px;
+margin:5px;
+font-size:13px;
+}
+.footer{
+text-align:center;
+padding:20px;
+color:#cbd5e1;
+}
+@media(max-width:700px){
+.glass{width:92%;}
+.row input{width:100%;}
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+<img src="logo.png" class="logo">
+<h1>SHARNBASAVA UNIVERSITY</h1>
+<h2>Faculty of Engineering & Technology</h2>
+<p>Department of Computer Science & Engineering</p>
+<h2>⚡ SMART ELECTRICITY BILL PREDICTOR</h2>
+</div>
+
+<div id="loginPage">
+<div class="glass">
+<h2>🔒 Project Login</h2>
+
+<div class="passbox">
+<input type="password" id="password" placeholder="Enter Password">
+<button class="eye" onclick="togglePassword()">👁</button>
+</div>
+
+<button class="btn" onclick="login()">Open Project</button>
+<p id="msg"></p>
+
+</div>
+</div>
+
+<div id="mainPage">
+
+<div class="card">
+<h2>📅 Add Monthly Record</h2>
+
+<div class="row">
+<input id="month" placeholder="Enter Month" onkeydown="nextField(event)">
+<input id="units" type="number" placeholder="Enter Units" onkeydown="enterAdd(event)">
+</div>
+
+<button class="add" onclick="addRecord()">➕ Add Record</button>
+</div>
+
+<div class="card">
+<h2>📊 Bill History</h2>
+
+<table>
+<thead>
+<tr>
+<th>Month</th>
+<th>Units</th>
+<th>Bill (₹)</th>
+</tr>
+</thead>
+
+<tbody id="history"></tbody>
+</table>
+</div>
+
+<div class="card">
+<h2>📈 Predict Next Month Bill</h2>
+
+<button class="btn" onclick="predictBill()">Generate Prediction</button>
+
+<br><br>
+
+<div id="result">
+Enter at least 3 monthly records.
+</div>
+</div>
+
+<div class="card">
+<h2>👨‍💻 Team Members</h2>
+
+<table>
+<tr>
+<th>USN</th>
+<th>Name</th>
+</tr>
+
+<tr>
+<td>SG25CSE050</td>
+<td>Harish Biradar</td>
+</tr>
+
+<tr>
+<td>SG25CSE057</td>
+<td>Kartik V</td>
+</tr>
+
+<tr>
+<td>SG25CSE007</td>
+<td>Adarsh R Patil</td>
+</tr>
+
+<tr>
+<td>SG25CSE016</td>
+<td>Akash S Patil</td>
+</tr>
+</table>
+
+</div>
+
+<div class="card">
+<h2>📘 Project Information</h2>
+
+<p><b>Project:</b> Smart Electricity Bill Predictor</p>
+<p><b>University:</b> Sharnbasava University</p>
+<p><b>Department:</b> Computer Science & Engineering</p>
+<p><b>Semester:</b> B.Tech 3rd Semester</p>
+<p><b>Academic Year:</b> 2025–2026</p>
+
+<br>
+
+<span class="badge">HTML5</span>
+<span class="badge">CSS3</span>
+<span class="badge">JavaScript</span>
+</div>
+
+<div class="card">
+<h2>✨ Features</h2>
+
+<p>✔ Automatic Electricity Bill Calculation</p>
+<p>✔ Slab Wise Billing System</p>
+<p>✔ Monthly Bill History</p>
+<p>✔ Next Month Bill Prediction</p>
+<p>✔ Energy Saving Suggestion</p>
+<p>✔ Password Protected Login</p>
+</div>
+
+</div>
+
+<div class="footer">
+<h3>⚡ Smart Electricity Bill Predictor</h3>
+<p>B.Tech CSE 3rd Semester Mini Project</p>
+<p>Sharnbasava University, Kalaburagi</p>
+<p>© 2026 All Rights Reserved</p>
+</div>
+
+<script>
+const PASSWORD="CSE2026";
+let records=[];
+
+function togglePassword(){
+let p=document.getElementById("password");
+p.type=(p.type==="password")?"text":"password";
+}
+
+function login(){
+let p=document.getElementById("password").value;
+if(p===PASSWORD){
+document.getElementById("loginPage").style.display="none";
+document.getElementById("mainPage").style.display="block";
+}else{
+document.getElementById("msg").innerHTML="Wrong Password";
+}
+}
+
+function nextField(e){
+if(e.key==="Enter"){
+e.preventDefault();
+document.getElementById("units").focus();
+}
+}
+
+function enterAdd(e){
+if(e.key==="Enter"){
+e.preventDefault();
+addRecord();
+}
+}
+
+function calculateBill(u){
+if(u<=100) return u*3;
+if(u<=200) return 300+(u-100)*5;
+return 800+(u-200)*7;
+}
+
+function addRecord(){
+let m=document.getElementById("month").value.trim();
+let u=parseInt(document.getElementById("units").value);
+
+if(m===""||isNaN(u)){
+alert("Enter Month and Units");
+return;
+}
+
+let b=calculateBill(u);
+records.push({m,u,b});
+
+let r=document.getElementById("history").insertRow();
+r.insertCell(0).innerHTML=m;
+r.insertCell(1).innerHTML=u;
+r.insertCell(2).innerHTML="₹ "+b.toFixed(2);
+
+month.value="";
+units.value="";
+month.focus();
+}
+
+function predictBill(){
+
+if(records.length<3){
+result.innerHTML="Enter at least 3 records.";
+return;
+}
+
+let n=records.length;
+
+let avg=Math.floor(
+(records[n-1].u+
+records[n-2].u+
+records[n-3].u)/3
+);
+
+let bill=calculateBill(avg);
+
+let tip="Excellent! Low electricity usage.";
+
+if(avg>200)
+tip="Reduce AC and heater usage.";
+
+else if(avg>100)
+tip="Use LED bulbs to save energy.";
+
+result.innerHTML=
+"<h3>Prediction Result</h3>"+
+"<p><b>Predicted Units:</b> "+avg+"</p>"+
+"<p><b>Estimated Bill:</b> ₹ "+bill.toFixed(2)+"</p>"+
+"<p><b>Suggestion:</b> "+tip+"</p>";
+}
+</script>
+
+</body>
+</html>
